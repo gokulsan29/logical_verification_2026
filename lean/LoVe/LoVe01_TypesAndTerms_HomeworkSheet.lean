@@ -38,22 +38,22 @@ constructing a term. By hovering over `_`, you will see the current logical
 context. -/
 
 def B : (α → β) → (γ → α) → γ → β :=
-  sorry
+  fun ab ca c ↦ ab (ca c)
 
 def S : (α → β → γ) → (α → β) → α → γ :=
-  sorry
+  fun abc ab a ↦ (abc a) (ab a)
 
 def nonsense1 : (γ → (α → β) → α) → γ → β → α :=
-  sorry
+  fun caba c b ↦ caba c (fun _ ↦ b)
 
 def nonsense2 : (α → α → β) → (β → γ) → α → β → γ :=
-  sorry
+  fun aab bc a b ↦ bc (aab a a)
 
 def nonsense3 : ((α → β) → γ → δ) → γ → β → δ :=
-  sorry
+  fun abcd c b ↦ abcd (fun _ ↦ b) c
 
 def nonsense4 : (α → β) → (α → γ) → α → β → γ :=
-  sorry
+  fun ab ac a _↦ ac a
 
 /- 1.2. Complete the following definition.
 
@@ -63,7 +63,7 @@ follow the procedure described in the Hitchhiker's Guide.
 Note: Peirce is pronounced like the English word "purse". -/
 
 def weakPeirce : ((((α → β) → α) → α) → β) → β :=
-  sorry
+  fun abaab ↦ abaab (fun aba ↦ aba (fun a ↦ abaab (fun aba₂ ↦ a)))
 
 /- ## Question 2: Typing Derivation
 
@@ -73,11 +73,31 @@ draw horizontal bars) and `⊢` useful.
 
 Feel free to introduce abbreviations to avoid repeating large contexts `C`. -/
 
+/-
+                                --------------------------- Var -------------- Var
+                                ca : (γ → α) ⊢ ca : (γ → α)     c : γ ⊢ c : γ
+--------------------------- Var ---------------------------------------------- App
+ab : (α → β) ⊢ ab : (α → β)     ca : (γ → α), c : γ ⊢ (ca c) : α
+------------------------------------------------------------------------------ App
+ab : (α → β), ca : (γ → α), c : γ ⊢ ab (ca c) : β
+------------------------------------------------------ Fun
+⊢ fun ab ca c ↦ ab (ca c) : (α → β) → (γ → α) → γ → β
+-/
+
 -- write your solution here
 
 /- 2.2. Show the typing derivation for your definition of `S` above, using
 ASCII or Unicode art. Start with an empty context. -/
 
 -- write your solution here
-
+/-
+------------------------------------- Var ------------- Var --------------------------- Var -------------- Var
+abc : (α → β → γ) ⊢ abc : (α → β → γ)     a : α ⊢ a : α     ab : (α → β) ⊢ ab : (α → β)     a : α ⊢ a : α
+------------------------------------------------------- App ---------------------------------------------- App
+abc : (α → β → γ), a : α ⊢ (abc a) : β → γ                  ab : (α → β), a : α ⊢ (ab a) : β
+---------------------------------------------------------------------------------------------------------- App
+abc : (α → β → γ), ab : (α → β), a : α ⊢ (abc a) (ab a) : γ
+---------------------------------------------------------------------------------------------------------- Fun
+⊢ fun abc ab a ↦ (abc a) (ab a) : (α → β → γ) → (α → β) → α → γ
+-/
 end LoVe
